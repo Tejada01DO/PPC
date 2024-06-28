@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\PPC.Client.props" />
+</Project>

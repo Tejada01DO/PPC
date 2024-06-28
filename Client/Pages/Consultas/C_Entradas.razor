@@ -1,0 +1,63 @@
+@page "/C_Entradas"
+@inject HttpClient httpClient
+@inject NotificationService notify
+
+<div class="card-header">
+    <h2>Consulta de Entradas de Productos</h2>
+</div>
+
+<div class="card-body">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Entrada ID</th>
+                <th>Fecha</th>
+                <th>Concepto</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach(var item in L_Entradas)
+            {
+                <tr>
+                    <td>@item.EntradaId</td>
+                    <td>@item.Fecha</td>
+                    <td>@item.Concepto</td>
+                    <td><a href="/R_Productos/@item.EntradaId"><span class="oi oi-eye"></span></a></td>
+                </tr>
+                <br>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    public int Conteo { get; set; }
+    public Entradas entradas { get; set; } = new Entradas();
+    public List<Entradas> L_Entradas { get; set; } = new List<Entradas>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var entrada = await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas");
+
+        if(entrada is not null)
+        {
+            L_Entradas = entrada;
+        }
+    }
+
+    public async Task Buscar()
+    {
+        L_Entradas = await httpClient.GetFromJsonAsync<List<Entradas>>($"api/Entradas");
+
+        Conteo = L_Entradas != null ? L_Entradas!.Count() : 0;
+        StateHasChanged();
+    }
+
+    public void Reiniciar()
+    {
+        entradas = new Entradas();
+        L_Entradas.Clear();
+    }
+}
